@@ -42,3 +42,5 @@ export const SOLVED_PROBLEMS_PATH = `${LEETCODER_DATA_PATH}/SolvedProblems.json`
 export const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
 export const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 export const USE_GROQ_AI = process.env.USE_GROQ_AI === "true";
+export const PROBLEM_PICK_MODE = process.env.PROBLEM_PICK_MODE || "random";
+export const SINGLE_PROBLEM_NAME = process.env.SINGLE_PROBLEM_NAME || "";

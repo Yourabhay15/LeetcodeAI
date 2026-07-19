@@ -1,1 +1,0 @@
-{"problemName":"rising-temperature","language":"mysql","code":"SELECT w1.id\r\nFROM Weather AS w1 , Weather AS w2\r\nWHERE w1.Temperature > w2.Temperature AND DATEDIFF(w1.recordDate , w2.recordDate) = 1"}

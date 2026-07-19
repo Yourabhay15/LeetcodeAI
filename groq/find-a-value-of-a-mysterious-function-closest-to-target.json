@@ -1,0 +1,5 @@
+{
+  "problemName": "find-a-value-of-a-mysterious-function-closest-to-target",
+  "language": "cpp",
+  "code": "class Solution {\npublic:\n    int closestToTarget(vector<int>& arr, int target) {\n        int n = arr.size();\n        set<int> s;\n        int res = INT_MAX;\n        for (int i = 0; i < n; i++) {\n            set<int> t;\n            t.insert(arr[i]);\n            for (auto x : s) {\n                t.insert(x & arr[i]);\n            }\n            s = t;\n            for (auto x : s) {\n                res = min(res, abs(x - target));\n            }\n        }\n        return res;\n    }\n};"
+}

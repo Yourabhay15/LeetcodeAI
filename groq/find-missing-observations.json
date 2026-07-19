@@ -1,0 +1,5 @@
+{
+  "problemName": "find-missing-observations",
+  "language": "javascript",
+  "code": "/**\n * @param {number[]} rolls\n * @param {number} mean\n * @param {number} n\n * @return {number[]}\n */\nvar missingRolls = function(rolls, mean, n) {\n    let total = rolls.reduce((a, b) => a + b, 0);\n    let totalRolls = rolls.length + n;\n    let requiredTotal = mean * totalRolls;\n    let missingTotal = requiredTotal - total;\n    \n    if (missingTotal < n || missingTotal > 6 * n) {\n        return [];\n    }\n    \n    let result = new Array(n).fill(Math.floor(missingTotal / n));\n    let remainder = missingTotal % n;\n    \n    for (let i = 0; i < remainder; i++) {\n        result[i]++;\n    }\n    \n    return result;\n};"
+}

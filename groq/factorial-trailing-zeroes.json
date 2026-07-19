@@ -1,0 +1,5 @@
+{
+  "problemName": "factorial-trailing-zeroes",
+  "language": "cpp",
+  "code": "class Solution {\npublic:\n    int trailingZeroes(int n) {\n        int count = 0;\n        while (n > 0) {\n            n /= 5;\n            count += n;\n        }\n        return count;\n    }\n};"
+}

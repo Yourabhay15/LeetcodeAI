@@ -1,6 +1,21 @@
 import chalk from "chalk";
 
 class Logger {
+  static logs = [];
+  static listeners = [];
+
+  static subscribe(listener) {
+    this.listeners.push(listener);
+  }
+
+  static unsubscribe(listener) {
+    this.listeners = this.listeners.filter(l => l !== listener);
+  }
+
+  static getLogs() {
+    return this.logs;
+  }
+
   static logMessage(type, message, obj = null) {
     const timestamp = new Date().toISOString();
     let log = `[${timestamp}]\t${message}`;
@@ -9,6 +24,18 @@ class Logger {
       log += `\nStack Trace: ${obj.stack}`;
     } else if (obj) {
       log += ` ${JSON.stringify(obj)}`;
+    }
+
+    // Buffer logs
+    const logItem = { type, log, timestamp };
+    this.logs.push(logItem);
+    if (this.logs.length > 300) this.logs.shift();
+
+    // Broadcast
+    for (const listener of this.listeners) {
+      try {
+        listener(logItem);
+      } catch (_) {}
     }
 
     switch (type) {

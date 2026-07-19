@@ -14,6 +14,7 @@ import Logger from "../utils/Logger.js";
 import FileManager from "../managers/FileManager.js";
 import {getBrowserDetails} from "../managers/BrowserManager.js";
 import GroqManager from "../managers/GroqManager.js";
+import { PROBLEM_PICK_MODE, SINGLE_PROBLEM_NAME } from "../data.js";
 
 class LeetcoderSolver {
   static async #checkIfSolvedEarlier(problemName) {
@@ -22,6 +23,7 @@ class LeetcoderSolver {
   }
 
   static async #solveProblemWithName(problemName) {
+    this.currentProblem = problemName;
     try {
       Logger.warn(`[NAVIGATING]\t\t\t:${problemName}`);
       const {page} = await getBrowserDetails();
@@ -39,16 +41,7 @@ class LeetcoderSolver {
       } catch (_) {
       }
 
-      try {
-        const acceptedDiv = await getElementByXPath(page, IS_QUESTION_PREMIUM, 1, 0.1);
-        const acceptedText = await acceptedDiv[0].evaluate((ele) => ele.textContent);
-        if (acceptedText.includes("Subscribe")) {
-          Logger.error(`[PREMIUM_QUESTION]\t\t:${problemName}. Marking this as solved.`);
-          await FileManager.setSolvedProblemSet(problemName);
-          return;
-        }
-      } catch (_) {
-      }
+      
 
       Logger.success(`[SOLVING]\t\t\t:${problemName}`);
 
@@ -162,15 +155,14 @@ class LeetcoderSolver {
       await page.evaluate(el => el.click(), submit_btn[0]);
 
       Logger.warn(`[AWAITING_VERDICT]\t\t:${problemName}`);
-      const isSolutionAccepted = await getElementByXPath(page, IS_SOLUTION_ACCEPTED_DIV_XPATH, 30, 0);
+      const isSolutionAccepted = await getElementByXPath(page, IS_SOLUTION_ACCEPTED_DIV_XPATH, 90, 0);
       const solutionAcceptedText = await isSolutionAccepted[0].evaluate((ele) => ele.textContent);
 
       if (solutionAcceptedText === 'Accepted') {
         Logger.success(`[ACCEPTED]\t\t\t:${problemName}`);
         await FileManager.setSolvedProblemSet(problemName);
-        await FileManager.saveProblemSolution(problemName, language, code);
       } else {
-        throw new Error(`${problemName} ${solutionAcceptedText}. Looks like the solution is old, contact the developer to fix this.`);
+        Logger.error(`[VERDICT_REJECTED]\t:${problemName} - Verdict: ${solutionAcceptedText}`);
       }
       await sleep(1);
     } catch (err) {
@@ -179,19 +171,48 @@ class LeetcoderSolver {
         await FileManager.setSolvedProblemSet(problemName);
         return;
       }
+
+      const isBrowserClosed = err.message && (
+        err.message.includes("Target closed") || 
+        err.message.includes("Session closed") || 
+        err.message.includes("main frame too early")
+      );
+
+      if (isBrowserClosed) {
+        Logger.warn(`[BROWSER_CLOSED]\t: The automated browser window was closed or disconnected.`);
+        this.stop();
+        return;
+      }
+
       Logger.error(`[FAILED]\t\t: Failed to solve the ${problemName} problem with error`, err);
       try {
         const { page } = await getBrowserDetails();
-        await page.screenshot({ path: `error_${problemName}.png` });
-        Logger.warn(`[ERROR_SCREENSHOT]\t: Saved error screenshot to error_${problemName}.png`);
+        if (page && !page.isClosed()) {
+          await page.screenshot({ path: `error_${problemName}.png` });
+          Logger.warn(`[ERROR_SCREENSHOT]\t: Saved error screenshot to error_${problemName}.png`);
+        }
       } catch (screenshotErr) {
-        Logger.error("Failed to capture error screenshot:", screenshotErr);
+        // Suppress screenshot log if browser is closing
       }
     }
   }
 
+  static isRunning = false;
+  static currentProblem = "";
+  static status = "idle"; // "idle", "authenticating", "solving"
+
+  static stop() {
+    this.isRunning = false;
+    this.status = "idle";
+    this.currentProblem = "";
+  }
+
   static async #solveProblems(problemNames) {
     for (const problemName of problemNames) {
+      if (!this.isRunning) {
+        Logger.warn("[SOLVER_STOPPED]\t: Solver loop stopped by user request.");
+        break;
+      }
       const checkIfSolved = await this.#checkIfSolvedEarlier(problemName);
       if (!checkIfSolved) {
         await this.#solveProblemWithName(problemName);
@@ -202,18 +223,42 @@ class LeetcoderSolver {
   }
 
   static async solve() {
+    this.isRunning = true;
+    this.status = "solving";
     Logger.error('<<<< Starting Leetcoder Solver >>>>');
-    const allProblemsName = await FileManager.getAllProblemsNames();
     
-    // Shuffle the list of problems randomly (Fisher-Yates)
-    for (let i = allProblemsName.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [allProblemsName[i], allProblemsName[j]] = [allProblemsName[j], allProblemsName[i]];
-    }
+    try {
+      let problemsToSolve = [];
+      if (PROBLEM_PICK_MODE === "single") {
+        if (!SINGLE_PROBLEM_NAME) {
+          throw new Error("PROBLEM_PICK_MODE is set to 'single' but SINGLE_PROBLEM_NAME is not configured in .env.");
+        }
+        problemsToSolve = [SINGLE_PROBLEM_NAME];
+        Logger.success(`[QUEUED]\t\t\t: Single problem '${SINGLE_PROBLEM_NAME}'`);
+      } else {
+        const allProblemsName = await FileManager.getAllProblemsNames();
+        
+        if (PROBLEM_PICK_MODE === "sequential") {
+          problemsToSolve = allProblemsName.sort((a, b) => a.localeCompare(b));
+          Logger.success(`[QUEUED]\t\t\t:${problemsToSolve.length} problems to process (sequential order)`);
+        } else {
+          // Default to "random"
+          problemsToSolve = allProblemsName;
+          for (let i = problemsToSolve.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [problemsToSolve[i], problemsToSolve[j]] = [problemsToSolve[j], problemsToSolve[i]];
+          }
+          Logger.success(`[QUEUED]\t\t\t:${problemsToSolve.length} problems to process (randomized order)`);
+        }
+      }
 
-    Logger.success(`[QUEUED]\t\t\t:${allProblemsName.length} problems to process (randomized order)`);
-    await this.#solveProblems(allProblemsName);
-    Logger.error('<<<< Exiting Leetcoder Solver >>>>');
+      await this.#solveProblems(problemsToSolve);
+    } finally {
+      this.isRunning = false;
+      this.status = "idle";
+      this.currentProblem = "";
+      Logger.error('<<<< Exiting Leetcoder Solver >>>>');
+    }
   }
 }
 

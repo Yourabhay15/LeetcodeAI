@@ -1,1 +1,0 @@
-{"problemName":"stone-game","language":"python3","code":"class Solution:\n    def stoneGame(self, piles: List[int]) -> bool:\n        return True"}

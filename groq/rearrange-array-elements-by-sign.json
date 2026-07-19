@@ -1,0 +1,5 @@
+{
+  "problemName": "rearrange-array-elements-by-sign",
+  "language": "cpp",
+  "code": "class Solution {\npublic:\n    vector<int> rearrangeArray(vector<int>& nums) {\n        vector<int> pos, neg;\n        for (int num : nums) {\n            if (num > 0) pos.push_back(num);\n            else neg.push_back(num);\n        }\n        vector<int> result;\n        for (int i = 0; i < pos.size(); i++) {\n            result.push_back(pos[i]);\n            result.push_back(neg[i]);\n        }\n        return result;\n    }\n};"
+}

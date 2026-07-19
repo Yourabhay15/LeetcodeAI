@@ -5,13 +5,30 @@ import path from 'path';
 
 class FileManager {
   static async getAllProblemsNames() {
-    const fileList = await fs.readdir('./problems');
-    const files = fileList.map(file => file.split(".")[0]);
-    Logger.success(`Total Problems found ${files.length}`, files);
-    return files;
+    try {
+      const file = await fs.readFile('./problems.json', 'utf-8');
+      const data = JSON.parse(file);
+      const files = data.map(item => item.name);
+      return files;
+    } catch (_) {
+      const fileList = await fs.readdir('./problems');
+      const files = fileList.map(file => file.split(".")[0]);
+      return files;
+    }
   }
 
   static async getProblemDetails(problemName) {
+    try {
+      const file = await fs.readFile('./problems.json', 'utf-8');
+      const data = JSON.parse(file);
+      const problem = data.find(item => item.name === problemName);
+      if (problem) {
+        const obj = { language: problem.language || "cpp", code: "" };
+        Logger.warn(`[PROBLEM_DETAILS]\t\t:`, obj);
+        return obj;
+      }
+    } catch (_) {
+    }
     const file = await fs.readFile(`./problems/${problemName}.json`, 'utf-8');
     const data = JSON.parse(file);
     const obj = {language: data.language, code: data.code};
@@ -60,17 +77,7 @@ class FileManager {
       }
     }
   }
-
-  static async saveProblemSolution(problemName, language, code) {
-    const filePath = `./problems/${problemName}.json`;
-    const fileContent = { problemName, language, code };
-    try {
-      await fs.writeFile(filePath, JSON.stringify(fileContent, null, 2));
-      Logger.success(`[SAVED_LOCAL_PROBLEM]\t:${problemName}`);
-    } catch (err) {
-      Logger.error(`[FAILED_LOCAL_SAVE]\t:${problemName}`, err);
-    }
-  }
+  
 
   static async saveGroqResponse(problemName, language, code) {
     const dirPath = "./groq";
