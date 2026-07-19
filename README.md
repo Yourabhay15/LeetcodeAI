@@ -12,6 +12,10 @@
   <strong>Automate login, optimal solution generation, web submissions, and solution scraping on LeetCode.</strong>
 </p>
 
+> [!IMPORTANT]  
+> **Educational & Research Purpose Only**  
+> This project was developed as a case study in system design to explore browser automation, Monaco Editor scripting, real-time logging architectures, and Large Language Model (LLM) orchestration. It is strictly intended for educational, personal archive, and research purposes. Do not use this tool to misrepresent progress or automate active contest submissions. Always respect [LeetCode's Terms of Service](https://leetcode.com/terms/).
+
 ---
 
 ## 📖 Overview
@@ -48,7 +52,7 @@ graph TD
   - Waits for button states and processes real-time submission verdicts (`Accepted` / `Runtime Error` etc.).
 - **📊 Real-time Web Dashboard**: Includes a built-in Node.js HTTP server. The UI streams terminal execution logs dynamically using **Server-Sent Events (SSE)**. You can start/stop the execution and configure runtime settings directly from `http://localhost:3000`.
 - **📂 Bulk Solution Scraper**: Scrapes and formats previously accepted solutions from your LeetCode history and saves them to a clean folder structure.
-- **📸 visual Debugging & Safety**: Supports resumption from crash states (uses local JSON databases to keep track of completed questions). If a submission fails, it captures a screenshot (`error_[problem-slug].png`) to help debug UI or logical mismatch issues.
+- **📸 Visual Debugging & Safety**: Supports resumption from crash states (uses local JSON databases to keep track of completed questions). If a submission fails, it captures a screenshot (`error_[problem-slug].png`) to help debug UI or logical mismatch issues.
 
 ---
 
@@ -153,12 +157,6 @@ UserData/
         ├── SolvedProblems.json <-- Database listing completed/skipped slugs
         └── ScrapedSolutions/   <-- Output folder containing archived solutions
 ```
-
----
-
-## ⚖️ Usage Disclaimer
-
-Leetcoder is intended strictly for **educational, personal backup, and research purposes**. Using automated agents to solve platform puzzles in bulk can violate platform terms. Always read and respect [LeetCode's Terms of Service](https://leetcode.com/terms/) and community guidelines. Use responsibly.
 
 ---
 
