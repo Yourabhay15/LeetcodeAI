@@ -1,0 +1,5 @@
+{
+  "problemName": "alphabet-board-path",
+  "language": "python3",
+  "code": "class Solution:\n    def alphabetBoardPath(self, target: str) -> str:\n        board = [\"abcde\", \"fghij\", \"klmno\", \"pqrst\", \"uvwxy\", \"z\"]\n        loc = {}\n        for i, row in enumerate(board):\n            for j, c in enumerate(row):\n                loc[c] = (i, j)\n        \n        res = []\n        r, c = 0, 0\n        for char in target:\n            i, j = loc[char]\n            if i < r:\n                res.append('U' * (r - i))\n            if i > r:\n                res.append('D' * (i - r))\n            if j < c:\n                res.append('L' * (c - j))\n            if j > c:\n                res.append('R' * (j - c))\n            res.append('!')\n            r, c = i, j\n        \n        return ''.join(res)"
+}

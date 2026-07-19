@@ -1,0 +1,5 @@
+{
+  "problemName": "stickers-to-spell-word",
+  "language": "python3",
+  "code": "from collections import Counter\nfrom typing import List\n\nclass Solution:\n    def minStickers(self, stickers: List[str], target: str) -> int:\n        stickers = [Counter(sticker) for sticker in stickers]\n        memo = dict()\n\n        def dfs(target):\n            if not target:\n                return 0\n            if target in memo:\n                return memo[target]\n            ans = float('inf')\n            cnt = Counter(target)\n            for sticker in stickers:\n                if target[0] not in sticker:\n                    continue\n                tmp = dfs(''.join([c * (cnt[c] - sticker.get(c, 0)) for c in cnt]))\n                if tmp != -1:\n                    ans = min(ans, tmp + 1)\n            memo[target] = ans if ans != float('inf') else -1\n            return memo[target]\n\n        return dfs(target)"
+}

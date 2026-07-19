@@ -1,0 +1,5 @@
+{
+  "problemName": "merge-nodes-in-between-zeros",
+  "language": "cpp",
+  "code": "/**\n * Definition for singly-linked list.\n * struct ListNode {\n *     int val;\n *     ListNode *next;\n *     ListNode() : val(0), next(nullptr) {}\n *     ListNode(int x) : val(x), next(nullptr) {}\n *     ListNode(int x, ListNode *next) : val(x), next(next) {}\n * };\n */\nclass Solution {\npublic:\n    ListNode* mergeNodes(ListNode* head) {\n        ListNode* dummy = new ListNode(0);\n        ListNode* current = dummy;\n        int sum = 0;\n        while (head) {\n            if (head->val == 0) {\n                if (sum != 0) {\n                    current->next = new ListNode(sum);\n                    current = current->next;\n                    sum = 0;\n                }\n            } else {\n                sum += head->val;\n            }\n            head = head->next;\n        }\n        return dummy->next;\n    }\n};"
+}

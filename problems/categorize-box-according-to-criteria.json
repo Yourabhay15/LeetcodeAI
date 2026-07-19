@@ -1,0 +1,5 @@
+{
+  "problemName": "categorize-box-according-to-criteria",
+  "language": "cpp",
+  "code": "class Solution {\npublic:\n    string categorizeBox(int length, int width, int height, int mass) {\n        bool isBulky = (length >= 10000 || width >= 10000 || height >= 10000) || (long long)length * width * height >= 1000000000;\n        bool isHeavy = mass >= 100;\n        \n        if (isBulky && isHeavy) return \"Both\";\n        if (isBulky) return \"Bulky\";\n        if (isHeavy) return \"Heavy\";\n        return \"Neither\";\n    }\n};"
+}

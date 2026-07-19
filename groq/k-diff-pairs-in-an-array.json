@@ -1,0 +1,5 @@
+{
+  "problemName": "k-diff-pairs-in-an-array",
+  "language": "cpp",
+  "code": "class Solution {\npublic:\n    int findPairs(vector<int>& nums, int k) {\n        if (k < 0) return 0;\n        unordered_set<int> visited;\n        unordered_set<int> pairs;\n        for (int num : nums) {\n            if (visited.find(num - k) != visited.end()) {\n                pairs.insert(min(num, num - k));\n            }\n            if (k > 0 && visited.find(num + k) != visited.end()) {\n                pairs.insert(min(num, num + k));\n            }\n            visited.insert(num);\n        }\n        return pairs.size();\n    }\n};"
+}
