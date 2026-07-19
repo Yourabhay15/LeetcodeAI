@@ -1,0 +1,5 @@
+{
+  "problemName": "largest-plus-sign",
+  "language": "cpp",
+  "code": "class Solution {\npublic:\n    int orderOfLargestPlusSign(int n, vector<vector<int>>& mines) {\n        vector<vector<int>> grid(n, vector<int>(n, 1));\n        for (auto& mine : mines) {\n            grid[mine[0]][mine[1]] = 0;\n        }\n        \n        int maxOrder = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = 0; j < n; j++) {\n                if (grid[i][j] == 1) {\n                    int order = 1;\n                    while (i - order >= 0 && i + order < n && j - order >= 0 && j + order < n) {\n                        if (grid[i - order][j] == 1 && grid[i + order][j] == 1 && grid[i][j - order] == 1 && grid[i][j + order] == 1) {\n                            order++;\n                        } else {\n                            break;\n                        }\n                    }\n                    maxOrder = max(maxOrder, order);\n                }\n            }\n        }\n        return maxOrder;\n    }\n};"
+}

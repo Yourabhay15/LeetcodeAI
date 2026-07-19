@@ -1,0 +1,5 @@
+{
+  "problemName": "top-k-frequent-words",
+  "language": "cpp",
+  "code": "class Solution {\npublic:\n    vector<string> topKFrequent(vector<string>& words, int k) {\n        unordered_map<string, int> count;\n        for (const auto& word : words) {\n            count[word]++;\n        }\n        \n        vector<string> result;\n        for (const auto& pair : count) {\n            result.push_back(pair.first);\n        }\n        \n        sort(result.begin(), result.end(), [&count](const string& a, const string& b) {\n            if (count[a] == count[b]) {\n                return a < b;\n            }\n            return count[a] > count[b];\n        });\n        \n        result.resize(k);\n        return result;\n    }\n};"
+}

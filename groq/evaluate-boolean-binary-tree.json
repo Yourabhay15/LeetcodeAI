@@ -1,0 +1,5 @@
+{
+  "problemName": "evaluate-boolean-binary-tree",
+  "language": "cpp",
+  "code": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    bool evaluateTree(TreeNode* root) {\n        if (root->val == 0) return false;\n        if (root->val == 1) return true;\n        if (root->val == 2) return evaluateTree(root->left) || evaluateTree(root->right);\n        if (root->val == 3) return evaluateTree(root->left) && evaluateTree(root->right);\n    }\n};"
+}

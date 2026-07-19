@@ -1,0 +1,5 @@
+{
+  "problemName": "hamming-distance",
+  "language": "cpp",
+  "code": "class Solution {\npublic:\n    int hammingDistance(int x, int y) {\n        return __builtin_popcount(x ^ y);\n    }\n};"
+}

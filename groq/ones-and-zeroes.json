@@ -1,0 +1,5 @@
+{
+  "problemName": "ones-and-zeroes",
+  "language": "cpp",
+  "code": "class Solution {\npublic:\n    int findMaxForm(vector<string>& strs, int m, int n) {\n        vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));\n        for (const string& str : strs) {\n            int zeros = count(str.begin(), str.end(), '0');\n            int ones = str.size() - zeros;\n            for (int i = m; i >= zeros; --i) {\n                for (int j = n; j >= ones; --j) {\n                    dp[i][j] = max(dp[i][j], dp[i - zeros][j - ones] + 1);\n                }\n            }\n        }\n        return dp[m][n];\n    }\n};"
+}

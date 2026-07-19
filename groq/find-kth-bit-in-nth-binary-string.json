@@ -1,0 +1,5 @@
+{
+  "problemName": "find-kth-bit-in-nth-binary-string",
+  "language": "cpp",
+  "code": "class Solution {\npublic:\n    char findKthBit(int n, int k) {\n        string s = \"0\";\n        for (int i = 1; i < n; i++) {\n            string t = s;\n            for (char& c : t) {\n                c = c == '0' ? '1' : '0';\n            }\n            reverse(t.begin(), t.end());\n            s += \"1\" + t;\n        }\n        return s[k - 1];\n    }\n};"
+}

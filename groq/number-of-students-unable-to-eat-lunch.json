@@ -1,0 +1,5 @@
+{
+  "problemName": "number-of-students-unable-to-eat-lunch",
+  "language": "cpp",
+  "code": "class Solution {\npublic:\n    int countStudents(vector<int>& students, vector<int>& sandwiches) {\n        int ones = 0, zeros = 0;\n        for (int student : students) {\n            if (student == 1) ones++;\n            else zeros++;\n        }\n        for (int sandwich : sandwiches) {\n            if (sandwich == 1) {\n                if (ones == 0) return zeros;\n                ones--;\n            } else {\n                if (zeros == 0) return ones;\n                zeros--;\n            }\n        }\n        return 0;\n    }\n};"
+}
